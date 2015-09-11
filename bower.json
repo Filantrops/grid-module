@@ -1,0 +1,25 @@
+{
+  "name": "grid-module",
+  "version": "1.0.0",
+  "authors": [
+    "Davis Mednis <davis.mednis@esynergy.lv>",
+    "Kristaps Strazdins <kristaps.strazdins@esynergy.lv>"
+  ],
+  "description": "Dynamic grid module",
+  "main": [
+    "grid.controller.js",
+    "grid.html"
+  ],
+  "keywords": [
+    "grid",
+    "dynamic"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
