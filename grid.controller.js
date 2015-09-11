@@ -232,7 +232,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
                 });
             }
         }
-
         grid.filter();
     }
 
