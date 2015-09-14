@@ -1,8 +1,8 @@
 var Grid = angular.module('gridModule', []);
 
-Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', GridController]);
+Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog', GridController]);
 
-function GridController($scope, $filter, $attrs, $element, dataOp) {
+function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
     var grid = this;
     //VARIABLES
     grid.collapseMainData = false;
@@ -12,7 +12,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
     grid.checkedRows = new Object();
     grid.checked = false;
     grid.spinner = false;
-    grid.item = $attrs.item;
+
     grid.last_page = 1;
     grid.page = 1;
     grid.total = 0;
@@ -65,6 +65,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
     grid.changePerPage = changePerPage;
     grid.uncheckAll = uncheckAll;
     grid.updateCount = updateCount;
+    grid.showAdvancedSearch = showAdvancedSearch;
     grid.intersect = intersect;
 
     grid.keyDown = function (event) {
@@ -106,6 +107,17 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
 
     function setGridParams(params) {
         grid.gridParams = params;
+        grid.item = params.catalog_name;
+        grid.create_function = params.create_function;
+        console.log(grid.gridParams);
+    }
+
+    function showAdvancedSearch() {
+        ngDialog.open({ 
+            template: 'advancedSearchModal',
+            className: 'ngdialog-theme-default theme-normal',
+            scope: $scope
+        });
     }
 
     //REALISATION
@@ -164,17 +176,15 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
             spinnerOn();
         }
         var params = grid.params;
-        params.start = (grid.page - 1) * grid.per_page;
-        params.length = grid.per_page;
+        params.offset = (grid.page - 1) * grid.per_page;
+        params.limit = grid.per_page;
 
-        params.filters = angular.extend(params.filters, grid.static_filters);
-        params.custom_filters = angular.extend(params.custom_filters, grid.static_custom_filters);
+        // params.filters = angular.extend(params.filters, grid.static_filters);
+        // params.custom_filters = angular.extend(params.custom_filters, grid.static_custom_filters);
 
-        if (grid.search) {
-            params.search = grid.search;
-        }
-        // This is where you load your data. You'll be required to create your own dataservice
-        dataOp.getData($attrs.module).then(function(data) {
+        console.log($attrs.module);
+        
+        dataOp.getData($attrs.module, params).then(function(data) {
             grid.rows = data;
             grid.total = data.length;
 
@@ -209,9 +219,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
 
     function filter() {
         grid.page = 1;
-        if (grid.plain_params && grid.plain_params.search) {
-            grid.params.search = grid.plain_params.search;
-        }
         loadData();
     }
 
@@ -232,6 +239,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp) {
                 });
             }
         }
+
         grid.filter();
     }
 

@@ -10,6 +10,9 @@
     "grid.controller.js",
     "grid.html"
   ],
+    "dependencies": {
+    "ngDialog": "~0.5.1"
+  },
   "keywords": [
     "grid",
     "dynamic"
