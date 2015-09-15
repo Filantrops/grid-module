@@ -96,7 +96,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
 
     $scope.$on('set_static_filters', function (event, args) {
         if (args.alias == $attrs.alias) {
-            console.log("static_filters_received", args);
             if (args.filters) {
                 grid.static_filters = args.filters;
             }
@@ -127,8 +126,8 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     function getFilters() {
        if($attrs.saveFilters) {
            if ($localStorage["user_0"] && $localStorage["user_0"].nzdis_grid_filters && $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
-               if ($localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].filters) {
-                   grid.params.search = $localStorage["user_" + $rootScope.user.username].dm_grid_filters[$state.current.name + "_" + $attrs.alias].search;
+               if ($localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search) {
+                   grid.params.search = $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search;
                }
            }
        }
@@ -138,7 +137,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         grid.gridParams = params;
         grid.item = params.catalog_name;
         grid.create_function = params.create_function;
-        console.log(grid.gridParams);
     }
 
     function showAdvancedSearch() {
@@ -182,7 +180,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             grid.removeCheckedObject(object.id);
         }
         grid.updateCount();
-        console.log(grid.selected);
     }
     
     function addCheckedObject(object) {
@@ -266,7 +263,6 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             grid.params.filters = {};
             grid.params.custom_filters = {};
         } else {
-            console.log(filters);
             if (filters.filters) {
                 filters.filters.forEach(function (filter) {
                     delete grid.params.filters[filter];
