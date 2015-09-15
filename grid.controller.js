@@ -1,8 +1,8 @@
 var Grid = angular.module('gridModule', ['ngStorage']);
 
-Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', GridController]);
+Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', GridController]);
 
-function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage) {
+function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage, $state) {
     var grid = this;
     //VARIABLES
     grid.collapseMainData = false;
