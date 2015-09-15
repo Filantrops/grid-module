@@ -1,8 +1,8 @@
 var Grid = angular.module('gridModule', []);
 
-Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog', GridController]);
+Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', GridController]);
 
-function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
+function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage) {
     var grid = this;
     //VARIABLES
     grid.collapseMainData = false;
@@ -67,6 +67,8 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
     grid.updateCount = updateCount;
     grid.showAdvancedSearch = showAdvancedSearch;
     grid.intersect = intersect;
+    grid.saveFilters = saveFilters;
+    grid.getFilters = getFilters;
 
     grid.keyDown = function (event) {
         if (event.keyCode == 13)
@@ -105,6 +107,33 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
         }
     });
 
+    function saveFilters() {
+        if($attrs.saveFilters) {
+            if (!$localStorage["user_0"]) {
+                $localStorage["user_0"] = {};
+            }
+            if (!$localStorage["user_0"].nzdis_grid_filters) {
+                $localStorage["user_0"].nzdis_grid_filters = {};
+            }
+            var filterCache = $localStorage["user_0"].nzdis_grid_filters;
+            if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
+                filterCache[$state.current.name + "_" + $attrs.alias] = {search: ""};
+            }
+            var currFC = filterCache[$state.current.name + "_" + $attrs.alias];
+            currFC.search = grid.params.search;
+        }
+    }
+ 
+    function getFilters() {
+       if($attrs.saveFilters) {
+           if ($localStorage["user_0"] && $localStorage["user_0"].nzdis_grid_filters && $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
+               if ($localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].filters) {
+                   grid.params.search = $localStorage["user_" + $rootScope.user.username].dm_grid_filters[$state.current.name + "_" + $attrs.alias].search;
+               }
+           }
+       }
+    }
+
     function setGridParams(params) {
         grid.gridParams = params;
         grid.item = params.catalog_name;
@@ -122,6 +151,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
 
     //REALISATION
     function init() {
+        getFilters();
         loadData();
     }
 
@@ -227,6 +257,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
 
     function filter() {
         grid.page = 1;
+        saveFilters();
         loadData();
     }
 

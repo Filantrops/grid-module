@@ -36,9 +36,10 @@
                                         <input type="checkbox" ng-checked="il.checked" ng-click="il.checkAll()"/>
                                     </th>
                                     <th ng-repeat="item in il.gridParams.columns">
-                            <col-header sortable="item.sortable" text="item.text" key="item.key" click="il.sortBy(item.key, sortable)" sort="il.sort"></col-header>
-                            </th>
-                            </tr>
+                                        <col-header sortable="item.sortable" text="item.text" key="item.key" click="il.sortBy(item.key, sortable)" sort="il.sort"></col-header>
+                                    </th>
+                                    <th ng-if="il.gridParams.delete" sortable="false"></th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="row in il.rows">
@@ -50,9 +51,14 @@
                                                />
                                     </td>
                                     <td ng-repeat="item in il.gridParams.columns">
-                                        <a href="" ng-if="item.click" ng-click="item.click_function(row.id)" type="button">
-                                            {{ row[item['key']]}}
-                                        </a>
+                                        <span ng-if="item.click">
+                                            <a href="" ng-if="item.click_id" ng-click="item.click_function(row.id)" type="button">
+                                                {{ row[item['key']]}}
+                                            </a>
+                                            <a href="" ng-if="!item.click_id" ng-click="item.click_function(row)" type="button">
+                                                {{ row[item['key']]}}
+                                            </a>
+                                        </span>
                                         <span ng-if="item.cardinal">
                                             <div class="dropdown" ng-if="row[item['key']].length > 1">
                                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -74,6 +80,9 @@
                                             {{ row[item['key']][item['subkey']]}}
                                         </span>
                                         <span ng-if="!item.click && !item.cardinal && !item.cardinal_temp">{{ row[item['key']]}}</span>
+                                    </td>
+                                    <td ng-if="il.gridParams.delete">
+                                        <a href="" class="text-red icon-link" ng-click="il.gridParams.delete_function(row.id, il.loadData);">&#10008</a>
                                     </td>
                                 </tr>
                             </tbody>
