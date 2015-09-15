@@ -179,18 +179,26 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog) {
         params.offset = (grid.page - 1) * grid.per_page;
         params.limit = grid.per_page;
 
-        // params.filters = angular.extend(params.filters, grid.static_filters);
-        // params.custom_filters = angular.extend(params.custom_filters, grid.static_custom_filters);
+        //for mock-ups
+        params.start = (grid.page - 1) * grid.per_page;
+        params.length = grid.per_page;
 
-        console.log($attrs.module);
-        
-        dataOp.getData($attrs.module, params).then(function(data) {
-            grid.rows = data;
-            grid.total = data.length;
-
+        //for mock-ups
+        if ($attrs.dynamic) {
+            dataOp.getData($attrs.module, params).then(function(data) {
+                grid.rows = data;
+                grid.total = data.length;
+                getCheckState();
+                spinnerOff();
+            });
+        } else {
+            var data = dataOp.getData($attrs.module, params);
+            grid.rows = data.data;
+            grid.total = data.total;
             getCheckState();
             spinnerOff();
-        });
+        }
+
     }
 
     function sortBy(key, sortable) {
