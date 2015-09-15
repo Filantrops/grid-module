@@ -1,4 +1,4 @@
-var Grid = angular.module('gridModule', []);
+var Grid = angular.module('gridModule', ['ngStorage']);
 
 Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', GridController]);
 

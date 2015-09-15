@@ -1,6 +1,6 @@
 {
   "name": "grid-module",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "authors": [
     "Davis Mednis <davis.mednis@esynergy.lv>",
     "Kristaps Strazdins <kristaps.strazdins@esynergy.lv>"
@@ -11,7 +11,8 @@
     "grid.html"
   ],
     "dependencies": {
-    "ngDialog": "~0.5.1"
+    "ngDialog": "~0.5.1",
+	"ngstorage": "~0.3.9"
   },
   "keywords": [
     "grid",
