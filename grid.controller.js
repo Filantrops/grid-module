@@ -212,9 +212,23 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
 
         //for mock-ups
         if ($attrs.dynamic) {
+            grid.advanced_search_data = [];
             dataOp.getData($attrs.module, params).then(function(data) {
                 grid.rows = data;
                 grid.total = data.length;
+
+                angular.forEach(params.search, function (searchVal, searchKey) {
+                    if (searchVal != '' && grid.gridParams.columns) {
+                        angular.forEach(grid.gridParams.columns, function (item) {
+                            if (item.key == searchKey) {
+                                grid.advanced_search_data.push({ key: item.text, value : searchVal, ref: searchKey});
+                            }
+         
+                        });
+                        
+                    }
+                });
+
                 getCheckState();
                 spinnerOff();
             });
