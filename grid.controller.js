@@ -21,7 +21,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         reversed: {},
         sort_key: null
     };
-    
+
     Object.size = function (obj) {
         var size = 0, key;
         for (key in obj) {
@@ -122,7 +122,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             currFC.search = grid.params.search;
         }
     }
- 
+
     function getFilters() {
        if($attrs.saveFilters) {
            if ($localStorage["user_0"] && $localStorage["user_0"].nzdis_grid_filters && $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
@@ -140,7 +140,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function showAdvancedSearch() {
-        ngDialog.open({ 
+        ngDialog.open({
             template: 'advancedSearchModal',
             className: 'ngdialog-theme-default theme-normal',
             scope: $scope
@@ -162,17 +162,17 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 return true;
         });
     }
-    
+
     function changePerPage(per_page) {
         grid.page = 1;
         grid.per_page = per_page;
         loadData();
     }
-    
+
     function updateCount() {
         grid.selected = Object.size(grid.checkedRows);
     }
-    
+
     function addRemoveCheckedObject(object, status) {
         if(status) {
             grid.addCheckedObject(object);
@@ -181,7 +181,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         }
         grid.updateCount();
     }
-    
+
     function addCheckedObject(object) {
         grid.checkedRows[object.id] = {
             checked: true,
@@ -189,12 +189,12 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             disabled: false
         };
     }
-    
+
     function removeCheckedObject(objectId) {
         delete grid.checkedRows[objectId];
         grid.checked = false;
     }
-    
+
     function loadData(spinner) {
         if (typeof (spinner) === 'undefined') {
             spinner = true;
@@ -214,8 +214,8 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         if ($attrs.dynamic) {
             grid.advanced_search_data = [];
             dataOp.getData($attrs.module, params).then(function(data) {
-                grid.rows = data;
-                grid.total = data.length;
+                grid.rows = data.rows;
+                grid.total = data.total_count;
 
                 angular.forEach(params.search, function (searchVal, searchKey) {
                     if (searchVal != '' && grid.gridParams.columns) {
@@ -223,9 +223,9 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                             if (item.key == searchKey) {
                                 grid.advanced_search_data.push({ key: item.text, value : searchVal, ref: searchKey});
                             }
-         
+
                         });
-                        
+
                     }
                 });
 
@@ -346,7 +346,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             }
         });
     }
-    
+
     function uncheckAll() {
         grid.checkedRows = new Object();
         grid.updateCount();
