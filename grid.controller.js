@@ -12,6 +12,8 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.checkedRows = new Object();
     grid.checked = false;
     grid.spinner = false;
+    grid.attrSaveFilters = $attrs.saveFilters;
+    grid.module = $attrs.module;
 
     grid.last_page = 1;
     grid.page = 1;
@@ -107,7 +109,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     });
 
     function saveFilters() {
-        if($attrs.saveFilters) {
+        if(grid.attrSaveFilters) {
             if (!$localStorage["user_0"]) {
                 $localStorage["user_0"] = {};
             }
@@ -124,7 +126,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function getFilters() {
-       if($attrs.saveFilters) {
+       if(grid.attrSaveFilters) {
            if ($localStorage["user_0"] && $localStorage["user_0"].nzdis_grid_filters && $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
                if ($localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search) {
                    grid.params.search = $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search;
@@ -213,7 +215,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         //for mock-ups
         if ($attrs.dynamic) {
             grid.advanced_search_data = [];
-            dataOp.getData($attrs.module, params).then(function(data) {
+            dataOp.getData(grid.module, params).then(function(data) {
                 grid.rows = data.rows;
                 grid.total = data.total_count;
 
@@ -233,7 +235,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 spinnerOff();
             });
         } else {
-            var data = dataOp.getData($attrs.module, params);
+            var data = dataOp.getData(grid.module, params);
             grid.rows = data.data;
             grid.total = data.total;
             getCheckState();
