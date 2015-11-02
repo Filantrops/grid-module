@@ -13,7 +13,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.checked = false;
     grid.spinner = false;
     grid.attrSaveFilters = $attrs.saveFilters;
-    grid.module = $attrs.module;
+    grid.attrModule = $attrs.module;
 
     grid.last_page = 1;
     grid.page = 1;
@@ -215,7 +215,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         //for mock-ups
         if ($attrs.dynamic) {
             grid.advanced_search_data = [];
-            dataOp.getData(grid.module, params).then(function(data) {
+            dataOp.getData(grid.attrModule, params).then(function(data) {
                 grid.rows = data.rows;
                 grid.total = data.total_count;
 
@@ -235,7 +235,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 spinnerOff();
             });
         } else {
-            var data = dataOp.getData(grid.module, params);
+            var data = dataOp.getData(grid.attrModule, params);
             grid.rows = data.data;
             grid.total = data.total;
             getCheckState();
