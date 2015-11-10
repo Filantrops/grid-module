@@ -1,20 +1,20 @@
+'use strict';
+
 var Grid = angular.module('gridModule', ['ngStorage']);
-
 Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', GridController]);
-
 function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage, $state) {
     var grid = this;
+
     //VARIABLES
     grid.collapseMainData = false;
     grid.collapseWorkersData = true;
     grid.collapseFinanseData = true;
     grid.rows = [];
-    grid.checkedRows = new Object();
+    grid.checkedRows = {};
     grid.checked = false;
     grid.spinner = false;
     grid.attrSaveFilters = $attrs.saveFilters;
     grid.attrModule = $attrs.module;
-
     grid.last_page = 1;
     grid.page = 1;
     grid.total = 0;
@@ -25,11 +25,14 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     };
 
     Object.size = function (obj) {
-        var size = 0, key;
-        for (key in obj) {
-            if (obj.hasOwnProperty(key))
+        var size = 0;
+
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
                 size++;
+            }
         }
+
         return size;
     };
 
@@ -71,6 +74,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.intersect = intersect;
     grid.saveFilters = saveFilters;
     grid.getFilters = getFilters;
+    grid.exportData = exportData;
 
     grid.keyDown = function (event) {
         if (event.keyCode == 13)
@@ -220,7 +224,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 grid.total = data.total_count;
 
                 angular.forEach(params.search, function (searchVal, searchKey) {
-                    if (searchVal != '' && grid.gridParams.columns) {
+                    if (searchVal !== '' && grid.gridParams.columns) {
                         angular.forEach(grid.gridParams.columns, function (item) {
                             if (item.key == searchKey) {
                                 grid.advanced_search_data.push({ key: item.text, value : searchVal, ref: searchKey});
@@ -350,8 +354,12 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function uncheckAll() {
-        grid.checkedRows = new Object();
+        grid.checkedRows = {};
         grid.updateCount();
+    }
+
+    function exportData(fileType) {
+        dataOp.exportData(grid.attrModule, fileType, grid.checkedRows);
     }
 
     init();
