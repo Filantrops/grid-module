@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 var Grid = angular.module('gridModule', ['ngStorage']);
 Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', GridController]);
@@ -17,7 +17,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.attrModule = $attrs.module;
     grid.last_page = 1;
     grid.page = 1;
-    grid.total = 0;
+    grid.total = null;
     grid.selected = 0;
     grid.sort = {
         reversed: {},
