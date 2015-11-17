@@ -223,6 +223,18 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 grid.rows = data.rows;
                 grid.total = data.total_count;
 
+                if (data.export_link) {
+                    grid.export_link = data.export_link;
+                } else {
+                    grid.export_link = null;
+                }
+
+                if (data.file_name) {
+                    grid.file_name = data.file_name;
+                } else {
+                    grid.file_name = null;
+                }
+
                 angular.forEach(params.search, function (searchVal, searchKey) {
                     if (searchVal !== '' && grid.gridParams.columns) {
                         angular.forEach(grid.gridParams.columns, function (item) {
@@ -242,6 +254,9 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             var data = dataOp.getData(grid.attrModule, params);
             grid.rows = data.data;
             grid.total = data.total;
+            grid.export_link = null;
+            grid.export_link = null;
+
             getCheckState();
             spinnerOff();
         }
