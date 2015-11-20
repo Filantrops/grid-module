@@ -75,6 +75,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.saveFilters = saveFilters;
     grid.getFilters = getFilters;
     grid.exportData = exportData;
+    grid.deleteDataDialog = deleteDataDialog;
 
     grid.keyDown = function (event) {
         if (event.keyCode == 13)
@@ -111,6 +112,24 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             filter();
         }
     });
+
+    function deleteDataDialog(callBackFunc) {
+        ngDialog.openConfirm({
+            template: 'shared/grid/deleteDialog.html',
+            className: 'ngdialog-theme-default dialog400',
+            data: {
+                count: grid.selected
+            },
+            scope: $scope
+        }).then(function (value) {
+            callBackFunc(grid.checkedRows).then(function(data) {
+                if (data) {
+                    grid.checkedRows = {};
+                    loadData();
+                }
+            });
+        });
+    }
 
     function saveFilters() {
         if(grid.attrSaveFilters) {
