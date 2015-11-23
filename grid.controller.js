@@ -390,6 +390,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     function uncheckAll() {
         grid.checkedRows = {};
         grid.updateCount();
+        grid.checked = null;
     }
 
     function exportData(fileType) {
