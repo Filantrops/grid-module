@@ -394,7 +394,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function exportData(fileType) {
-        dataOp.exportData(grid.attrModule, fileType, grid.checkedRows, grid.total, grid.params.search);
+        dataOp.exportData(grid.attrModule, fileType, grid.checkedRows, grid.total);
     }
 
     init();
