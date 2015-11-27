@@ -1,8 +1,8 @@
 ﻿'use strict';
 
 var Grid = angular.module('gridModule', ['ngStorage']);
-Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', GridController]);
-function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage, $state) {
+Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', '$rootScope', GridController]);
+function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $localStorage, $state, $rootScope) {
     var grid = this;
 
     //VARIABLES
@@ -132,27 +132,33 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function saveFilters() {
-        if(grid.attrSaveFilters) {
-            if (!$localStorage["user_0"]) {
-                $localStorage["user_0"] = {};
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        if (userId !== null) {
+            if (grid.attrSaveFilters) {
+                if (!$localStorage[userId]) {
+                    $localStorage[userId] = {};
+                }
+                if (!$localStorage[userId].nzdis_grid_filters) {
+                    $localStorage[userId].nzdis_grid_filters = {};
+                }
+                var filterCache = $localStorage[userId].nzdis_grid_filters;
+                if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
+                    filterCache[$state.current.name + "_" + $attrs.alias] = {search: ""};
+                }
+                var currFC = filterCache[$state.current.name + "_" + $attrs.alias];
+                currFC.search = grid.params.search;
             }
-            if (!$localStorage["user_0"].nzdis_grid_filters) {
-                $localStorage["user_0"].nzdis_grid_filters = {};
-            }
-            var filterCache = $localStorage["user_0"].nzdis_grid_filters;
-            if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
-                filterCache[$state.current.name + "_" + $attrs.alias] = {search: ""};
-            }
-            var currFC = filterCache[$state.current.name + "_" + $attrs.alias];
-            currFC.search = grid.params.search;
         }
     }
 
     function getFilters() {
-       if(grid.attrSaveFilters) {
-           if ($localStorage["user_0"] && $localStorage["user_0"].nzdis_grid_filters && $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
-               if ($localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search) {
-                   grid.params.search = $localStorage["user_0"].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search;
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        if (userId !== null) {
+           if (grid.attrSaveFilters) {
+               if ($localStorage[userId] && $localStorage[userId].nzdis_grid_filters && $localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
+                   if ($localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search) {
+                       grid.params.search = $localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search;
+                   }
                }
            }
        }
