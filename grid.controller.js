@@ -124,6 +124,13 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         }).then(function (value) {
             callBackFunc(grid.checkedRows).then(function(data) {
                 if (data) {
+                    grid.total = grid.total - Object.keys(grid.checkedRows).length;
+                    var newLastPage = Math.ceil(grid.total / grid.per_page);
+
+                    if (grid.page > newLastPage) {
+                        grid.page = newLastPage;
+                    }
+
                     grid.checkedRows = {};
                     loadData();
                 }
