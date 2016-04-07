@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 var Grid = angular.module('gridModule', ['ngStorage']);
 Grid.controller('GridController', ['$scope', '$filter', '$attrs', '$element', 'dataService', 'ngDialog','$localStorage', '$state', '$rootScope', GridController]);
@@ -76,6 +76,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     grid.getFilters = getFilters;
     grid.exportData = exportData;
     grid.deleteDataDialog = deleteDataDialog;
+    grid.saveGridParam = saveGridParam;
 
     grid.keyDown = function (event) {
         if (event.keyCode == 13)
@@ -161,6 +162,58 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         }
     }
 
+    function saveGridParam() {
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        if (userId !== null) {
+            if (!$localStorage[userId]) {
+                $localStorage[userId] = {};
+            }
+
+            if (!$localStorage[userId].nzdis_grid_filters) {
+                $localStorage[userId].nzdis_grid_filters = {};
+            }
+
+            var filterCache = $localStorage[userId].nzdis_grid_filters;
+            if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
+                filterCache[$state.current.name + "_" + $attrs.alias] = {
+                    page: grid.page,
+                    order_by: grid.params.order_by,
+                    order_dir: grid.params.order_dir
+                };
+            } else {
+                filterCache[$state.current.name + "_" + $attrs.alias].page = grid.page;
+                filterCache[$state.current.name + "_" + $attrs.alias].order_by = grid.params.order_by;
+                filterCache[$state.current.name + "_" + $attrs.alias].order_dir = grid.params.order_dir;
+            }
+        }
+    }
+
+    function getGridParam() {
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        if (userId !== null) {
+            if (!$localStorage[userId]) {
+                $localStorage[userId] = {};
+            }
+
+            if (!$localStorage[userId].nzdis_grid_filters) {
+                $localStorage[userId].nzdis_grid_filters = {};
+            }
+
+            var filterCache = $localStorage[userId].nzdis_grid_filters;
+
+            if (filterCache[$state.current.name + "_" + $attrs.alias] == null || typeof filterCache[$state.current.name + "_" + $attrs.alias] == "undefined") {
+                filterCache[$state.current.name + "_" + $attrs.alias] = {
+                    page: 1,
+                    order_by: 'id',
+                    order_dir: 'asc'
+                }
+            }
+            grid.page = filterCache[$state.current.name + "_" + $attrs.alias].page;
+            grid.params.order_by = filterCache[$state.current.name + "_" + $attrs.alias].order_by;
+            grid.params.order_dir = filterCache[$state.current.name + "_" + $attrs.alias].order_dir;
+        }
+    }
+
     function getFilters() {
         var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
         if (userId !== null) {
@@ -191,7 +244,9 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     //REALISATION
     function init() {
         getFilters();
+        getGridParam();
         loadData();
+
     }
 
     function intersect(a, b) {
@@ -255,6 +310,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
         if ($attrs.dynamic) {
             grid.advanced_search_data = [];
             dataOp.getData(grid.attrModule, params).then(function(data) {
+                grid.saveGridParam();
                 grid.rows = data.rows;
                 grid.total = data.total_count;
 
@@ -318,6 +374,7 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 params.order_dir = 'asc';
                 grid.sort.reversed[key] = false;
             }
+            saveGridParam();
             loadData();
         }
     }
