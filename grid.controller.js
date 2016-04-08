@@ -146,16 +146,16 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function saveFilters() {
-        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : 'anony';
         if (userId !== null) {
             if (grid.attrSaveFilters) {
                 if (!$localStorage[userId]) {
                     $localStorage[userId] = {};
                 }
-                if (!$localStorage[userId].nzdis_grid_filters) {
-                    $localStorage[userId].nzdis_grid_filters = {};
+                if (!$localStorage[userId].grid_filters) {
+                    $localStorage[userId].grid_filters = {};
                 }
-                var filterCache = $localStorage[userId].nzdis_grid_filters;
+                var filterCache = $localStorage[userId].grid_filters;
                 if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
                     filterCache[$state.current.name + "_" + $attrs.alias] = {search: ""};
                 }
@@ -166,39 +166,41 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     }
 
     function saveGridParam() {
-        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : 'anony';
         if (userId !== null) {
             if (!$localStorage[userId]) {
                 $localStorage[userId] = {};
             }
 
-            if (!$localStorage[userId].nzdis_grid_filters) {
-                $localStorage[userId].nzdis_grid_filters = {};
+            if (!$localStorage[userId].grid_filters) {
+                $localStorage[userId].grid_filters = {};
             }
 
-            var filterCache = $localStorage[userId].nzdis_grid_filters;
+            var filterCache = $localStorage[userId].grid_filters;
 
             if (!filterCache[$state.current.name + "_" + $attrs.alias]) {
                 filterCache[$state.current.name + "_" + $attrs.alias] = {
                     page: grid.page,
                     order_by: grid.params.order_by,
-                    order_dir: grid.params.order_dir
+                    order_dir: grid.params.order_dir,
+                    per_page: grid.per_page
                 };
             } else {
                 filterCache[$state.current.name + "_" + $attrs.alias].page = grid.page;
                 filterCache[$state.current.name + "_" + $attrs.alias].order_by = grid.params.order_by;
                 filterCache[$state.current.name + "_" + $attrs.alias].order_dir = grid.params.order_dir;
+                filterCache[$state.current.name + "_" + $attrs.alias].per_page = grid.per_page;
             }
         }
     }
 
     function getFilters() {
-        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : 'anony';
         if (userId !== null) {
            if (grid.attrSaveFilters) {
-               if ($localStorage[userId] && $localStorage[userId].nzdis_grid_filters && $localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias]) {
-                   if ($localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search) {
-                       grid.params.search = $localStorage[userId].nzdis_grid_filters[$state.current.name + "_" + $attrs.alias].search;
+               if ($localStorage[userId] && $localStorage[userId].grid_filters && $localStorage[userId].grid_filters[$state.current.name + "_" + $attrs.alias]) {
+                   if ($localStorage[userId].grid_filters[$state.current.name + "_" + $attrs.alias].search) {
+                       grid.params.search = $localStorage[userId].grid_filters[$state.current.name + "_" + $attrs.alias].search;
                    }
                }
            }
@@ -208,19 +210,21 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
     function setGridParams(params) {
         grid.gridParams = params;
 
-        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
+        var userId = $rootScope.currentUser ? $rootScope.currentUser.id : 'anony';
+        var filterCache = null;
 
         if (userId !== null) {
             if (!$localStorage[userId]) {
                 $localStorage[userId] = {};
             }
 
-            if (!$localStorage[userId].nzdis_grid_filters) {
-                $localStorage[userId].nzdis_grid_filters = {};
+            if (!$localStorage[userId].grid_filters) {
+                $localStorage[userId].grid_filters = {};
             }
+
+            filterCache = $localStorage[userId].grid_filters;
         }
 
-        var filterCache = $localStorage[userId].nzdis_grid_filters;
 
         if (filterCache[$state.current.name + "_" + $attrs.alias] && filterCache[$state.current.name + "_" + $attrs.alias].order_by) {
             grid.params.order_by = filterCache[$state.current.name + "_" + $attrs.alias].order_by;
@@ -240,6 +244,10 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
             } else {
                 grid.params.order_dir = 'asc';
             }
+        }
+
+        if (filterCache[$state.current.name + "_" + $attrs.alias] && filterCache[$state.current.name + "_" + $attrs.alias].per_page) {
+            grid.per_page = filterCache[$state.current.name + "_" + $attrs.alias].per_page;
         }
 
         if (filterCache[$state.current.name + "_" + $attrs.alias] && filterCache[$state.current.name + "_" + $attrs.alias].page) {
@@ -356,9 +364,10 @@ function GridController($scope, $filter, $attrs, $element, dataOp, ngDialog, $lo
                 getCheckState();
                 spinnerOff();
             }, function(response) {
-                var userId = $rootScope.currentUser ? $rootScope.currentUser.id : null;
-                var filterCache = $localStorage[userId].nzdis_grid_filters;
+                var userId = $rootScope.currentUser ? $rootScope.currentUser.id : 'anony';
+                var filterCache = $localStorage[userId].grid_filters;
                 delete filterCache[$state.current.name + "_" + $attrs.alias];
+                grid.setGridParams(grid.gridParams);
             });
         } else {
             var data = dataOp.getData(grid.attrModule, params);
